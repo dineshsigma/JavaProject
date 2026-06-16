@@ -26,7 +26,7 @@ public class HeaderAuthFilter extends OncePerRequestFilter {
 
 
     private static final String HEADER_NAME = "Authorization";
-    private static final String VALID_TOKEN = "dinesh"; // ✅ your custom value
+//    private static final String VALID_TOKEN = "dinesh"; // ✅ your custom value
     
 
 
