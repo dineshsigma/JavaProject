@@ -8,6 +8,7 @@ import com.example.demo.dto.LoginResponse;
 import com.example.demo.dto.LoginRequest;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,7 +23,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@Valid @RequestBody LoginRequest  request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest  request) {
 
     	System.out.println("username88888888888888888888");
 
@@ -33,11 +34,16 @@ public class AuthController {
     	System.out.println("Hashed password" + hashedPassword );
 
     	String token = jwtUtil.generateToken(email);
+    	
+    	String refreshToken =  jwtUtil.generateRefreshToken(email);
 
-    	return LoginResponse.builder()
+    	LoginResponse response = LoginResponse.builder()
             .status(200)
             .message("Login Successfully")
             .accessToken(token)
+            .refreshToken(refreshToken)
             .build();
+
+    	return ResponseEntity.ok(response);
     }
 }

@@ -8,9 +8,13 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import com.example.demo.model.Status;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+
 import java.util.List;
 import java.util.UUID;
-
+	
 @Service   // ✅ VERY IMPORTANT
 public class PrintFormJobService {
 
@@ -20,8 +24,8 @@ public class PrintFormJobService {
         this.repository = repository;
     }
 
-    public List<PrintFormJob> getAllJobs() {
-        return repository.findAll();
+    public Page<PrintFormJob> getAllJobs(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     public PrintFormJob getJobById(UUID id) {

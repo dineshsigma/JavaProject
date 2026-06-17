@@ -9,6 +9,12 @@ import java.util.UUID;
 import jakarta.validation.Valid;
 
 import java.util.List;
+import org.springframework.data.domain.Sort;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/print-jobs")
@@ -23,8 +29,13 @@ public class PrintFormJobController {
 
     // ✅ GET ALL
     @GetMapping
-    public List<PrintFormJob> getAllJobs() {
-        return service.getAllJobs();
+    public Page<PrintFormJob> getAllJobs(
+    		@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy
+    		) {
+    	Sort sort = Sort.by(sortBy).descending(); // default desc
+        return service.getAllJobs(PageRequest.of(page, size , sort));
     }
 
     // ✅ GET BY ID

@@ -31,6 +31,16 @@ public class JwtUtil {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
+    
+    public String generateRefreshToken(String username) {
+
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7)) // 7 days
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
 
     // ✅ Validate Token
     public boolean validateToken(String token) {
