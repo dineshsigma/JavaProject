@@ -24,8 +24,10 @@ public class PrintFormJobService {
         this.repository = repository;
     }
 
-    public Page<PrintFormJob> getAllJobs( String inspectionReportNo ,Pageable pageable) {
-    	if(inspectionReportNo!=null && inspectionReportNo.isEmpty()) {
+    public Page<PrintFormJob>getAllJobs(String inspectionReportNo ,Pageable pageable) {
+    	System.out.println("Service File" + inspectionReportNo + "  " + inspectionReportNo!=null && !inspectionReportNo.trim().isEmpty());
+    	if(inspectionReportNo!=null && !inspectionReportNo.trim().isEmpty()) {
+    		System.out.println("Inside check validations");
     		return repository.findByInspectionReportNo(inspectionReportNo, pageable);
     	}
         return repository.findAll(pageable);
