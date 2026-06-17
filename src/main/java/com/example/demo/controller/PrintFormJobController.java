@@ -30,12 +30,14 @@ public class PrintFormJobController {
     // ✅ GET ALL
     @GetMapping
     public Page<PrintFormJob> getAllJobs(
+    		@RequestParam(required = false) String inspectionReportNo,
     		@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy
     		) {
     	Sort sort = Sort.by(sortBy).descending(); // default desc
-        return service.getAllJobs(PageRequest.of(page, size , sort));
+    	System.out.println("inspectionReportNo" +  inspectionReportNo);
+        return service.getAllJobs(inspectionReportNo,PageRequest.of(page, size , sort));
     }
 
     // ✅ GET BY ID

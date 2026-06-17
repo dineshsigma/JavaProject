@@ -24,7 +24,10 @@ public class PrintFormJobService {
         this.repository = repository;
     }
 
-    public Page<PrintFormJob> getAllJobs(Pageable pageable) {
+    public Page<PrintFormJob> getAllJobs( String inspectionReportNo ,Pageable pageable) {
+    	if(inspectionReportNo!=null && inspectionReportNo.isEmpty()) {
+    		return repository.findByInspectionReportNo(inspectionReportNo, pageable);
+    	}
         return repository.findAll(pageable);
     }
 
