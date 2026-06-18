@@ -30,8 +30,8 @@ public class PrintFormJobService {
     }
 
     public Page<PrintFormJob>getAllJobs(String inspectionReportNo ,Pageable pageable) {
-    	System.out.println("Service File" + inspectionReportNo + "  " + inspectionReportNo!=null && !inspectionReportNo.trim().isEmpty());
-    	if(inspectionReportNo!=null && !inspectionReportNo.trim().isEmpty()) {
+//    	System.out.println("Service File" + inspectionReportNo + "  " + inspectionReportNo!=null && !inspectionReportNo.isEmpty());
+    	if(inspectionReportNo!=null && !inspectionReportNo.isEmpty()) {
     		System.out.println("Inside check validations");
     		return repository.findByInspectionReportNo(inspectionReportNo, pageable);
     	}
@@ -79,7 +79,7 @@ public class PrintFormJobService {
 
     		String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
     		
-    		System.out.println("fileName ===========" + "   " + fileName);
+//    		System.out.println("fileName ===========" + "   " + fileName);
 
     		File dest = new File(UPLOAD_DIR + File.separator + fileName);
     		
