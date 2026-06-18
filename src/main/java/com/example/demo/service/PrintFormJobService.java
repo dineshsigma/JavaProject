@@ -10,6 +10,9 @@ import com.example.demo.model.Status;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.File;
+import java.io.IOException;
 
 
 import java.util.List;
@@ -19,6 +22,8 @@ import java.util.UUID;
 public class PrintFormJobService {
 
     private final PrintFormJobRepository repository;
+    
+    private static final String UPLOAD_DIR = "C:/uploads/";
 
     public PrintFormJobService(PrintFormJobRepository repository) {
         this.repository = repository;
@@ -61,7 +66,31 @@ public class PrintFormJobService {
         job.setUpdatedAt(LocalDateTime.now());
 
         return repository.save(job);
-
-    	
     }
+    
+    public String uploadImage(MultipartFile file) {
+    	try {
+
+    		// ✅ Create folder if not exist
+    		File dir = new File(UPLOAD_DIR);
+    		if (!dir.exists()) {
+    			dir.mkdirs();
+    		}
+
+    		String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+    		
+    		System.out.println("fileName ===========" + "   " + fileName);
+
+    		File dest = new File(UPLOAD_DIR + File.separator + fileName);
+    		
+    		file.transferTo(dest);
+
+    		return "File uploaded successfully: " + fileName;
+
+    		
+    	}catch(IOException e) {
+    		throw new RuntimeException("File upload failed", e);
+    	}
+    	
+    } 
 }

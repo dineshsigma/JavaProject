@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -50,6 +51,13 @@ public class PrintFormJobController {
     @PostMapping
     public PrintFormJob createJob(@Valid @RequestBody PrintFormJobRequest request) {
     	return service.createJob(request);
+    }
+    
+    //upload Images
+    @PostMapping("/upload")
+    public String uploadImage(@RequestParam("file") MultipartFile file) {
+    	System.out.println("file------" + "  " + file);
+    	 return service.uploadImage(file);
     }
     
     
