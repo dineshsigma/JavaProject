@@ -19,17 +19,27 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
+    public ResponseEntity<?> handleValidationException(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest request) {
 
-        Map<String, String> errors = new HashMap<>();
+        StringBuilder errorMessage = new StringBuilder();
 
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage())
-        );
-        
-        return errors;
+        ex.getBindingResult().getFieldErrors().forEach(error -> {
+            errorMessage.append(error.getField())
+                    .append(": ")
+                    .append(error.getDefaultMessage())
+                    .append(", ");
+        });
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", 400);
+        response.put("error", "BAD REQUEST");
+        response.put("message",errorMessage.toString());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+    
     
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<Map<String, Object>> handleMethodNotAllowed(
