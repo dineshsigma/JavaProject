@@ -14,8 +14,6 @@ import com.example.demo.mapper.EmployeeMapper;
 import com.example.demo.service.EmployeeService;
 
 import jakarta.validation.Valid;
-import com.example.demo.exception.NoDataFoundException;
-
 import com.example.demo.entity.ApiResponse;
 
 @RestController
