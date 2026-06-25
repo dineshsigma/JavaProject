@@ -9,6 +9,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import com.example.demo.exception.NoDataFoundException;
+import com.example.demo.exception.ErrorResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,6 +17,20 @@ import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+	
+	
+	// common mthod code for all exceptions build response 
+	
+	private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status,String error,String message,HttpServletRequest request){
+		ErrorResponse response = new ErrorResponse(
+                status.value(),
+                error,
+                message,
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(response, status);
+	}
+	
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -31,78 +46,38 @@ public class GlobalExceptionHandler {
                     .append(error.getDefaultMessage())
                     .append(", ");
         });
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", 400);
-        response.put("error", "BAD REQUEST");
-        response.put("message",errorMessage.toString());
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        
+        return buildResponse(HttpStatus.BAD_REQUEST,"BAD REQUEST",errorMessage.toString(),request);
+       
     }
     
     
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<Map<String, Object>> handleMethodNotAllowed(
-            HttpRequestMethodNotSupportedException ex) {
-
-        Map<String, Object> response = new HashMap<>();
-
-        response.put("timestamp", LocalDateTime.now());
-        response.put("status", 405);
-        response.put("error", "Method Not Allowed");
-        response.put("message", ex.getMessage());
-
-        return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
+    public ResponseEntity<ErrorResponse> handleMethodNotAllowed(
+            HttpRequestMethodNotSupportedException ex , HttpServletRequest request) {
+        return buildResponse(HttpStatus.METHOD_NOT_ALLOWED,"Method Not Allowed",ex.getMessage(),request);
     }
     
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<?> handleEmptyBody(
+    public ResponseEntity<ErrorResponse> handleEmptyBody(
         HttpMessageNotReadableException ex,
         HttpServletRequest request) {
-    	
-    	Map<String, Object> response = new HashMap<>();
-    	
-    	response.put("timestamp", LocalDateTime.now());
-        response.put("status", 400);
-        response.put("error", "Bad Request");
-        response.put("message", request.getRequestURI());
-
-    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    return buildResponse(HttpStatus.BAD_REQUEST,"BAD REQUEST",ex.getMessage(),request);
     }
     
     @ExceptionHandler(NoHandlerFoundException.class)
-    public ResponseEntity<?> handleNotFoundUrl(
+    public ResponseEntity<ErrorResponse> handleNotFoundUrl(
             NoHandlerFoundException ex,
             HttpServletRequest request) {
-    	
-    	Map<String, Object> response = new HashMap<>();
-    	
-    	response.put("timestamp", LocalDateTime.now());
-        response.put("status", 404);
-        response.put("error", "Not Found");
-        response.put("message", request.getRequestURI());
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        return buildResponse(HttpStatus.NOT_FOUND,"NOT FOUND",ex.getMessage(),request);
     }
     
     
     @ExceptionHandler(NoDataFoundException.class)
-    public ResponseEntity<?> handleNoDataFound(
+    public ResponseEntity<ErrorResponse> handleNoDataFound(
             NoDataFoundException ex,
-            HttpServletRequest request) {
-    	
-    	Map<String, Object> response = new HashMap<>();
-    	
-    	response.put("timestamp", LocalDateTime.now());
-        response.put("status", 200);
-        response.put("error", "No Data Found");
-        response.put("message", request.getRequestURI());
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
-
-    
-    
-    
+            HttpServletRequest request) {        
+        return buildResponse(HttpStatus.NO_CONTENT,"NO_CONTENT",ex.getMessage(),request);
+    }  
 }
