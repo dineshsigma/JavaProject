@@ -27,6 +27,10 @@ public class HeaderAuthFilter extends OncePerRequestFilter {
 
     private static final String HEADER_NAME = "Authorization";
 //    private static final String VALID_TOKEN = "dinesh"; // ✅ your custom value
+     
+    private static final String MISSING_TOKEN = "{\"message\":\"Unauthorized - Missing Token\"}";
+    private static final String INVALID_TOKEN = "{\"message\":\"Unauthorized - Invalid Token\"}";
+
     
 
 
@@ -61,18 +65,16 @@ public class HeaderAuthFilter extends OncePerRequestFilter {
         		UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
         		SecurityContextHolder.getContext().setAuthentication(auth);
-
         		
         	}else {
-
         		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Invalid Token");
+                response.getWriter().write(INVALID_TOKEN);
                 return;
 
         	}
         }else {
         	 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        	 response.getWriter().write("Missing Token");
+        	 response.getWriter().write(MISSING_TOKEN);
         	 return;
         	
         }
