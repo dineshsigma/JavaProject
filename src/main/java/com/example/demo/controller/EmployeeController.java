@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-
 import java.util.List;
 import java.util.UUID;
 
@@ -22,66 +21,41 @@ import com.example.demo.entity.ApiResponse;
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController {
+
+	private final EmployeeService employeeservice;
 	
+	private final EmployeeMapper mapper;
 
-	private final EmployeeService service;
-    private final EmployeeMapper mapper;
-    
+	public EmployeeController(EmployeeService service, EmployeeMapper mapper) {
+		this.employeeservice = service;
+		this.mapper = mapper;
+	}
 
-    public EmployeeController(EmployeeService service, EmployeeMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
-    }
-    
+	@GetMapping
+	public ResponseEntity<ApiResponse<List<EmployeeResponseDTO>>> getAll() {
 
-    @GetMapping
-    public ResponseEntity<ApiResponse<List<EmployeeResponseDTO>>> getAll() {
+		List<Employee> employees = employeeservice.getAll();
 
-        List<Employee> employees = service.getAll();
-        
-        List<EmployeeResponseDTO> dtos =
-                employees.stream()
-                        .map(mapper::toDto)
-                        .toList();
-        
-        if(dtos.isEmpty()) {
-        	return ResponseEntity.ok(
-                new ApiResponse<>(200,"No Data Found",dtos)
-        			);
+		List<EmployeeResponseDTO> dtos = employees.stream().map(mapper::toDto).toList();
 
-        }
-        
+		if (dtos.isEmpty()) {
+			return ResponseEntity.ok(new ApiResponse<>(200, "No Data Found", dtos));
+		}
 
-        return ResponseEntity.ok(
-            new ApiResponse<>(
-                    200,
-                    "Data fetched successfully",
-                    dtos
-            )
-    );
+		return ResponseEntity.ok(new ApiResponse<>(200, "Data fetched successfully", dtos));
 
+	}
 
-        
-    }
-    
-    @PostMapping
-    public ResponseEntity<ApiResponse<EmployeeResponseDTO>> createEmployee(
-            @Valid @RequestBody EmployeeRequestDTO request) {
+	@PostMapping
+	public ResponseEntity<ApiResponse<EmployeeResponseDTO>> createEmployee(
+			@Valid @RequestBody EmployeeRequestDTO request) {
 
-        Employee emp = service.create(request);
+		Employee emp = employeeservice.create(request);
 
-        EmployeeResponseDTO responseDTO = mapper.toDto(emp);
-        
+		EmployeeResponseDTO responseDTO = mapper.toDto(emp);
 
-        return ResponseEntity.status(201).body(
-            new ApiResponse<>(
-                    201,
-                    "Employee created successfully",
-                    responseDTO
-            )
-            );
-        
-    }
-    
-    
+		return ResponseEntity.status(201).body(new ApiResponse<>(201, "Employee created successfully", responseDTO));
+
+	}
+
 }

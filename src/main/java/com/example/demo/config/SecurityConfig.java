@@ -16,61 +16,51 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
-
-
 @Configuration
 public class SecurityConfig {
-	
-    private final HeaderAuthFilter headerAuthFilter;
-    public SecurityConfig(HeaderAuthFilter headerAuthFilter) {
-        this.headerAuthFilter = headerAuthFilter;
-    }
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	private final HeaderAuthFilter headerAuthFilter;
 
-        http
-        	.cors(cors -> {}) 
-            .csrf(csrf -> csrf.disable())
-            
-            .authorizeHttpRequests(auth -> auth
-            		.requestMatchers("/api/auth/**").permitAll()
-            		.requestMatchers("/auth/**").permitAll()
-            		.requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() 
-            		.anyRequest().authenticated()
-            )
-            .addFilterBefore(headerAuthFilter,
-            		UsernamePasswordAuthenticationFilter.class);
+	public SecurityConfig(HeaderAuthFilter headerAuthFilter) {
+		this.headerAuthFilter = headerAuthFilter;
+	}
 
-        return http.build();
-    }
-    
-    
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
- // ✅ ADD THIS (CRITICAL)
-     @Bean
-     public CorsConfigurationSource corsConfigurationSource() {
+		http.cors(cors -> {
+		}).csrf(csrf -> csrf.disable())
 
-         CorsConfiguration configuration = new CorsConfiguration();
+				.authorizeHttpRequests(
+						auth -> auth.requestMatchers("/api/auth/**").permitAll().requestMatchers("/auth/**").permitAll()
+								.requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+								.anyRequest().authenticated())
+				.addFilterBefore(headerAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-         configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-         configuration.setAllowedHeaders(Arrays.asList("*"));
-         configuration.setAllowCredentials(true);
+		return http.build();
+	}
 
-         UrlBasedCorsConfigurationSource source =
-                 new UrlBasedCorsConfigurationSource();
+	// ✅ ADD THIS (CRITICAL)
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
 
-         source.registerCorsConfiguration("/**", configuration);
+		CorsConfiguration configuration = new CorsConfiguration();
 
-         return source;
-     }
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		configuration.setAllowedHeaders(Arrays.asList("*"));
+		configuration.setAllowCredentials(true);
 
-    
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+		source.registerCorsConfiguration("/**", configuration);
+
+		return source;
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
 }

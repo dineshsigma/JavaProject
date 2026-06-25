@@ -14,36 +14,32 @@ import org.springframework.http.ResponseEntity;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final JwtUtil jwtUtil;
-    private final PasswordEncoder passwordEncoder;
+	private final JwtUtil jwtUtil;
+	private final PasswordEncoder passwordEncoder;
 
-    public AuthController(JwtUtil jwtUtil , PasswordEncoder passwordEncoder) {
-        this.jwtUtil = jwtUtil;
-        this.passwordEncoder  = passwordEncoder;
-    }
+	public AuthController(JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
+		this.jwtUtil = jwtUtil;
+		this.passwordEncoder = passwordEncoder;
+	}
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest  request) {
+	@PostMapping("/login")
+	public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
 
-    	System.out.println("username88888888888888888888");
+		System.out.println("username88888888888888888888");
 
-    	String email = request.getEmail();
-    	String password = request.getPassword();
-    	String hashedPassword  = passwordEncoder.encode(password);
-    	
-    	System.out.println("Hashed password" + hashedPassword );
+		String email = request.getEmail();
+		String password = request.getPassword();
+		String hashedPassword = passwordEncoder.encode(password);
 
-    	String token = jwtUtil.generateToken(email);
-    	
-    	String refreshToken =  jwtUtil.generateRefreshToken(email);
+		System.out.println("Hashed password" + hashedPassword);
 
-    	LoginResponse response = LoginResponse.builder()
-            .status(200)
-            .message("Login Successfully")
-            .accessToken(token)
-            .refreshToken(refreshToken)
-            .build();
+		String token = jwtUtil.generateToken(email);
 
-    	return ResponseEntity.ok(response);
-    }
+		String refreshToken = jwtUtil.generateRefreshToken(email);
+
+		LoginResponse response = LoginResponse.builder().status(200).message("Login Successfully").accessToken(token)
+				.refreshToken(refreshToken).build();
+
+		return ResponseEntity.ok(response);
+	}
 }
