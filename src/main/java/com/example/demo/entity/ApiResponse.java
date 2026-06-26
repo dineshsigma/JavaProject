@@ -12,11 +12,9 @@ public class ApiResponse<T> {
 	private int status;
 	private String message;
 	private T data;
+	private Pagination pagination;
 	
 
-	private Long totalElements;
-    private Integer totalPages;
-    private Integer currentPage;
 
 
 	public ApiResponse(int status, String message, T data) {
@@ -26,40 +24,12 @@ public class ApiResponse<T> {
 		this.data = data;
 	}
 
-	public ApiResponse(int status, String message, T data, long totalElements, int totalPages, int currentPage) {
+	public ApiResponse(int status, String message, T data,Pagination pagination ) {
 		this.status = status;
 		this.message = message;
 		this.data = data;
-		this.totalElements = totalElements;
-		this.totalPages = totalPages;
-		this.currentPage = currentPage;
+		this.pagination = pagination;
+	
 	}
 
-//	public LocalDateTime getTimestamp() {
-//		return timestamp;
-//	}
-//
-//	public int getStatus() {
-//		return status;
-//	}
-//
-//	public String getMessage() {
-//		return message;
-//	}
-//
-//	public T getData() {
-//		return data;
-//	}
-//	
-//	public int getcurrentPage() {
-//		return currentPage;
-//	}
-//	
-//	public int getTotalPages() {
-//		return totalPages;
-//	}
-//	
-//	public long gettotalElements() {
-//		return totalElements;
-//	}
 }

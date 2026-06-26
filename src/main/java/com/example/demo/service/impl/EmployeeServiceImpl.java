@@ -9,7 +9,6 @@ import com.example.demo.dto.EmployeeRequestDTO;
 import com.example.demo.dto.EmployeeResponseDTO;
 import com.example.demo.entity.ApiResponse;
 import com.example.demo.entity.Employee;
-//import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.service.EmployeeService;
 import com.example.demo.mapper.EmployeeMapper;
@@ -17,8 +16,8 @@ import com.example.demo.mapper.EmployeeMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import com.example.demo.entity.ApiResponse;
 import org.springframework.data.domain.Sort;
+import com.example.demo.entity.Pagination;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -81,8 +80,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 		List<EmployeeResponseDTO> dtos = employeePage.getContent().stream().map(mapper::toDto).toList();
 
-		return new ApiResponse<>(200, dtos.isEmpty() ? "No Data Found" : "Data fetched successfully", dtos,
-				employeePage.getTotalElements(), employeePage.getTotalPages(), employeePage.getNumber() + 1);
+		Pagination pagination = new Pagination(employeePage.getNumber() + 1, employeePage.getSize(),
+				employeePage.getTotalElements());
+
+		return new ApiResponse<>(200, dtos.isEmpty() ? "No Data Found" : "Data fetched successfully", dtos, pagination);
 
 	}
 
