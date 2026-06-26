@@ -39,9 +39,7 @@ public class EmployeeController {
 		if (dtos.isEmpty()) {
 			return ResponseEntity.ok(new ApiResponse<>(200, "No Data Found", dtos));
 		}
-
 		return ResponseEntity.ok(new ApiResponse<>(200, "Data fetched successfully", dtos));
-
 	}
 
 	@PostMapping

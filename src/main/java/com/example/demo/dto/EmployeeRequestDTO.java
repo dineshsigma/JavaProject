@@ -1,6 +1,7 @@
 package com.example.demo.dto;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import com.example.demo.validator.ValidSalary;
 
 @Data
 public class EmployeeRequestDTO {
@@ -12,8 +13,8 @@ public class EmployeeRequestDTO {
     @NotBlank(message = "Employee ID is required")
     private String empId;
 
-    @NotBlank(message = "Salary is required")
-    private String empSalary;
+    @ValidSalary
+    private Object empSalary;
 
     @NotBlank(message = "Mobile number is required")
     @Pattern(regexp = "^[0-9]{10}$", message = "Mobile number must be 10 digits")
