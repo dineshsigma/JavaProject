@@ -32,6 +32,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	@Override
 	public Employee create(EmployeeRequestDTO request) {
+		// check if EMPId is already Exits or not
+		if (repository.existsByEmpId(request.getEmpId())) {
+			throw new RuntimeException("Employee ID already exists: " + request.getEmpId());
+		}
 		Employee emp = mapper.toEntity(request);
 		return repository.save(emp);
 	}

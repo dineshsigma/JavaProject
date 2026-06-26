@@ -48,7 +48,8 @@ public class EmployeeController {
 //		}
 //		return ResponseEntity.ok(new ApiResponse<>(200, "Data fetched successfully", dtos));
 
-		ApiResponse<List<EmployeeResponseDTO>> response = employeeservice.getEmployees(pageNumber, size, empId, sortField,sortOrder );
+		ApiResponse<List<EmployeeResponseDTO>> response = employeeservice.getEmployees(pageNumber, size, empId,
+				sortField, sortOrder);
 
 		return ResponseEntity.ok(response);
 
@@ -58,12 +59,21 @@ public class EmployeeController {
 	public ResponseEntity<ApiResponse<EmployeeResponseDTO>> createEmployee(
 			@Valid @RequestBody EmployeeRequestDTO request) {
 
-		Employee emp = employeeservice.create(request);
+		try {
+			Employee emp = employeeservice.create(request);
 
-		EmployeeResponseDTO responseDTO = mapper.toDto(emp); // After saving data convert for respone which fileds are
-																// displyed to client
+			EmployeeResponseDTO responseDTO = mapper.toDto(emp); // After saving data convert for respone which fileds
+																	// are
+																	// displyed to client
 
-		return ResponseEntity.status(201).body(new ApiResponse<>(201, "Employee created successfully", responseDTO));
+			return ResponseEntity.status(201)
+					.body(new ApiResponse<>(201, "Employee created successfully", responseDTO));
+
+		} catch (RuntimeException ex) {
+
+			return ResponseEntity.status(400).body(new ApiResponse<>(400, ex.getMessage(), null));
+
+		}
 
 	}
 
