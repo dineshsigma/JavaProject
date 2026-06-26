@@ -30,6 +30,8 @@ public class EmployeeMapper {
 	public EmployeeResponseDTO toDto(Employee emp) {
 		EmployeeResponseDTO dto = new EmployeeResponseDTO();
 
+		
+//		Only required fields go to client if any security filds no need to add here like password,API keys like that
 		dto.setId(emp.getId());
 		dto.setEmpName(emp.getEmpName());
 		dto.setEmpId(emp.getEmpId());

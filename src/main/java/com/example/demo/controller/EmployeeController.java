@@ -21,7 +21,7 @@ import com.example.demo.entity.ApiResponse;
 public class EmployeeController {
 
 	private final EmployeeService employeeservice;
-	
+
 	private final EmployeeMapper mapper;
 
 	public EmployeeController(EmployeeService service, EmployeeMapper mapper) {
@@ -30,16 +30,26 @@ public class EmployeeController {
 	}
 
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<EmployeeResponseDTO>>> getAll() {
+	public ResponseEntity<ApiResponse<List<EmployeeResponseDTO>>> getAll(
+			@RequestParam(defaultValue = "1") int pageNumber, @RequestParam(defaultValue = "1") int size,
+			@RequestParam(required = false) String empId
 
-		List<Employee> employees = employeeservice.getAll();
+	) {
 
-		List<EmployeeResponseDTO> dtos = employees.stream().map(mapper::toDto).toList();
+//		List<Employee> employees = employeeservice.getAll(); // call service layer and fetch data from database and
+//																// return a list of entity objects.
+//
+//		List<EmployeeResponseDTO> dtos = employees.stream().map(mapper::toDto).toList();
+//
+//		if (dtos.isEmpty()) {
+//			return ResponseEntity.ok(new ApiResponse<>(200, "No Data Found", dtos));
+//		}
+//		return ResponseEntity.ok(new ApiResponse<>(200, "Data fetched successfully", dtos));
 
-		if (dtos.isEmpty()) {
-			return ResponseEntity.ok(new ApiResponse<>(200, "No Data Found", dtos));
-		}
-		return ResponseEntity.ok(new ApiResponse<>(200, "Data fetched successfully", dtos));
+		ApiResponse<List<EmployeeResponseDTO>> response = employeeservice.getEmployees(pageNumber, size, empId);
+
+		return ResponseEntity.ok(response);
+
 	}
 
 	@PostMapping
@@ -48,7 +58,8 @@ public class EmployeeController {
 
 		Employee emp = employeeservice.create(request);
 
-		EmployeeResponseDTO responseDTO = mapper.toDto(emp);
+		EmployeeResponseDTO responseDTO = mapper.toDto(emp); // After saving data convert for respone which fileds are
+																// displyed to client
 
 		return ResponseEntity.status(201).body(new ApiResponse<>(201, "Employee created successfully", responseDTO));
 
