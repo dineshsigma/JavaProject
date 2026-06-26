@@ -32,7 +32,9 @@ public class EmployeeController {
 	@GetMapping
 	public ResponseEntity<ApiResponse<List<EmployeeResponseDTO>>> getAll(
 			@RequestParam(defaultValue = "1") int pageNumber, @RequestParam(defaultValue = "1") int size,
-			@RequestParam(required = false) String empId
+			@RequestParam(required = false) String empId,
+			@RequestParam(defaultValue = "created_date_time") String sortField,
+			@RequestParam(defaultValue = "ASC") String sortOrder
 
 	) {
 
@@ -46,7 +48,7 @@ public class EmployeeController {
 //		}
 //		return ResponseEntity.ok(new ApiResponse<>(200, "Data fetched successfully", dtos));
 
-		ApiResponse<List<EmployeeResponseDTO>> response = employeeservice.getEmployees(pageNumber, size, empId);
+		ApiResponse<List<EmployeeResponseDTO>> response = employeeservice.getEmployees(pageNumber, size, empId, sortField,sortOrder );
 
 		return ResponseEntity.ok(response);
 

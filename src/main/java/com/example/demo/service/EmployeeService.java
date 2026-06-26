@@ -14,5 +14,5 @@ public interface EmployeeService {
 
 	List<Employee> getAll();
 
-	public ApiResponse<List<EmployeeResponseDTO>> getEmployees(int pageNumber, int size, String empId);
+	public ApiResponse<List<EmployeeResponseDTO>> getEmployees(int pageNumber, int size, String empId, String sortField,String sortOrder);
 }

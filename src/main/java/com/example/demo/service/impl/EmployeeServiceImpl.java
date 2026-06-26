@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import com.example.demo.entity.ApiResponse;
+import org.springframework.data.domain.Sort;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -41,10 +42,34 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return repository.findAll();
 	}
 
-	@Override
-	public ApiResponse<List<EmployeeResponseDTO>> getEmployees(int pageNumber, int size, String empId) {
+	private ApiResponse<List<EmployeeResponseDTO>> validateSortField(String sortField) {
 
-		Pageable pageable = PageRequest.of(pageNumber - 1, size);
+		List<String> validFields = List.of("empName", "empId", "empSalary", "empEmail", "empMobileNumber",
+				"createdDateTime");
+
+		if (sortField != null && !validFields.contains(sortField)) {
+
+			return new ApiResponse<>(400, "Invalid sorting field: " + sortField, List.of());
+		}
+
+		return null;
+	}
+
+	@Override
+	public ApiResponse<List<EmployeeResponseDTO>> getEmployees(int pageNumber, int size, String empId, String sortField,
+			String sortOrder) {
+
+		ApiResponse<List<EmployeeResponseDTO>> validationError = validateSortField(sortField);
+
+		if (validationError != null) {
+			return validationError;
+		}
+
+		Sort sort = Sort.by(sortOrder.equalsIgnoreCase("DESC") ? Sort.Direction.DESC : Sort.Direction.ASC,
+				sortField != null ? sortField : "empName" // default field
+		);
+
+		Pageable pageable = PageRequest.of(pageNumber - 1, size, sort);
 
 		Page<Employee> employeePage;
 
@@ -56,7 +81,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 		List<EmployeeResponseDTO> dtos = employeePage.getContent().stream().map(mapper::toDto).toList();
 
-		return new ApiResponse<>(200, dtos.isEmpty() ? "No Data Found" : "Data fetched successfully", dtos);
+		return new ApiResponse<>(200, dtos.isEmpty() ? "No Data Found" : "Data fetched successfully", dtos,
+				employeePage.getTotalElements(), employeePage.getTotalPages(), employeePage.getNumber() + 1);
 
 	}
 
