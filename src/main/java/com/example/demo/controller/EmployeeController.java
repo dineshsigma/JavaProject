@@ -78,12 +78,19 @@ public class EmployeeController {
 	@PutMapping("/{id}")
 	public ResponseEntity<ApiResponse<EmployeeResponseDTO>> updateEmployee(@PathVariable UUID id,
 			@Valid @RequestBody EmployeeRequestDTO request) {
+		
+		try {
+			Employee updated = employeeservice.update(id, request);
 
-		Employee updated = employeeservice.update(id, request);
+			EmployeeResponseDTO dto = mapper.toDto(updated);
 
-		EmployeeResponseDTO dto = mapper.toDto(updated);
-
-		return ResponseEntity.ok(new ApiResponse<>(200, "Employee updated successfully", dto));
+			return ResponseEntity.ok(new ApiResponse<>(200, "Employee updated successfully", dto));
+			
+		}catch(RuntimeException ex) {
+			return ResponseEntity.status(400).body(new ApiResponse<>(400, ex.getMessage(), null));
+			
+		}
+		
 	}
 
 }
