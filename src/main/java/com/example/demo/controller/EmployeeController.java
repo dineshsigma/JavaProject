@@ -63,9 +63,7 @@ public class EmployeeController {
 			Employee emp = employeeservice.create(request);
 
 			EmployeeResponseDTO responseDTO = mapper.toDto(emp); // After saving data convert for respone which fileds
-																	// are
-																	// displyed to client
-
+																	// aredisplyed to client
 			return ResponseEntity.status(201)
 					.body(new ApiResponse<>(201, "Employee created successfully", responseDTO));
 
@@ -75,6 +73,17 @@ public class EmployeeController {
 
 		}
 
+	}
+
+	@PutMapping("/{id}")
+	public ResponseEntity<ApiResponse<EmployeeResponseDTO>> updateEmployee(@PathVariable UUID id,
+			@Valid @RequestBody EmployeeRequestDTO request) {
+
+		Employee updated = employeeservice.update(id, request);
+
+		EmployeeResponseDTO dto = mapper.toDto(updated);
+
+		return ResponseEntity.ok(new ApiResponse<>(200, "Employee updated successfully", dto));
 	}
 
 }

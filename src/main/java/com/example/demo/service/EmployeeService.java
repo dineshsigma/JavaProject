@@ -15,4 +15,6 @@ public interface EmployeeService {
 	List<Employee> getAll();
 
 	public ApiResponse<List<EmployeeResponseDTO>> getEmployees(int pageNumber, int size, String empId, String sortField,String sortOrder);
+	
+	public Employee update(UUID id, EmployeeRequestDTO request);
 }

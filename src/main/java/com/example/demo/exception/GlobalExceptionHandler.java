@@ -62,4 +62,20 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleNoDataFound(NoDataFoundException ex, HttpServletRequest request) {
 		return buildResponse(HttpStatus.NO_CONTENT, "NO_CONTENT", ex.getMessage(), request);
 	}
+	
+	
+	@ExceptionHandler(DuplicateResourceException.class)
+	public ResponseEntity<?> handleDuplicate(
+	        DuplicateResourceException ex,
+	        HttpServletRequest request) {
+
+	    ErrorResponse error = new ErrorResponse(
+	            400,
+	            "Duplicate Data",
+	            ex.getMessage(),
+	            request.getRequestURI()
+	    );
+
+	    return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+	}
 }

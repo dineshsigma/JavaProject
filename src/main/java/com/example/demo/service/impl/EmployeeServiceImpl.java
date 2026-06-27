@@ -18,6 +18,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import com.example.demo.entity.Pagination;
+import com.example.demo.exception.DuplicateResourceException;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -88,6 +91,40 @@ public class EmployeeServiceImpl implements EmployeeService {
 				employeePage.getTotalElements());
 
 		return new ApiResponse<>(200, dtos.isEmpty() ? "No Data Found" : "Data fetched successfully", dtos, pagination);
+
+	}
+
+	@Override
+	public Employee update(UUID id, EmployeeRequestDTO request) {
+
+		// Step 1: Check employee exists
+
+		Employee existing = repository.findById(id).orElse(null);
+
+		if (existing == null) {
+			throw new RuntimeException("Employee not found with id: " + id);
+		}
+
+		// Step 2: Check empId uniqueness
+		System.out.println("request.getEmpId()======" + request.getEmpId()); // EMP002
+		Optional<Employee> empWithSameId = repository.findByEmpId(request.getEmpId());
+		
+		System.out.println("condition01 ======" + empWithSameId.isPresent()); // true
+		
+		System.out.println("condition02 ======" + !empWithSameId.get().getId().equals(id));
+
+		if (empWithSameId.isPresent() && !empWithSameId.get().getId().equals(id)) {
+
+			throw new RuntimeException("Employee not found with id: " + request.getEmpId());
+		}
+
+		existing.setEmpName(request.getEmpName());
+		existing.setEmpId(request.getEmpId());
+		existing.setEmpSalary(String.valueOf(request.getEmpSalary()));
+		existing.setEmpMobileNumber(request.getEmpMobileNumber());
+		existing.setEmpEmail(request.getEmpEmail());
+
+		return repository.save(existing);
 
 	}
 
