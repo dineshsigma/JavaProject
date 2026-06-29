@@ -33,7 +33,7 @@ public class EmployeeController {
 	public ResponseEntity<ApiResponse<List<EmployeeResponseDTO>>> getAll(
 			@RequestParam(defaultValue = "1") int pageNumber, @RequestParam(defaultValue = "1") int size,
 			@RequestParam(required = false) String empId,
-			@RequestParam(defaultValue = "created_date_time") String sortField,
+			@RequestParam(defaultValue = "createdDateTime") String sortField,
 			@RequestParam(defaultValue = "ASC") String sortOrder
 
 	) {

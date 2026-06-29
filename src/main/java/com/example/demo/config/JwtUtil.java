@@ -16,7 +16,7 @@ import java.util.ArrayList;
 @Component
 public class JwtUtil {
 
-	private final String SECRET = "mysecretkeymysecretkeymysecretkey"; // min 32 chars
+	private static final String SECRET = "T6f#9Kp@2Lm$8Qz!xR7sWvY3uD1eF&bH";
 
 	private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
