@@ -8,7 +8,6 @@ import java.util.List;
 @Repository
 public interface  MenuRepository extends JpaRepository<Menu, String> {
 
-	// ✅ JOIN FETCH QUERY (YOUR REQUIREMENT)
 	@Query("SELECT m FROM Menu m JOIN FETCH m.categories")
 	List<Menu> findAllWithCategories();
 

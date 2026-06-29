@@ -3,8 +3,10 @@ package com.example.demo.entity;
 import java.time.LocalDateTime;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 
 @Data
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
