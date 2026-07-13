@@ -11,12 +11,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Map;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import java.io.PrintWriter;
+import com.example.demo.service.AdminService;
 
 @RestController
 @RequestMapping("/api/admins")
 @RequiredArgsConstructor
 public class AdminController {
 	private final CsvJobService csvJobService;
+	private final AdminService adminService;
 
 	@PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<?> uploadCsv(@RequestParam("file") MultipartFile file) throws Exception {
@@ -26,4 +30,21 @@ public class AdminController {
 		csvJobService.processCsv(filePath);
 		return ResponseEntity.ok(Map.of("message", "File Uploaded Successfully. Processing Started."));
 	}
+
+	@GetMapping(value = "/stream", produces = MediaType.APPLICATION_JSON_VALUE)
+	public StreamingResponseBody streamAdmins() {
+
+		return outputStream -> {
+
+			try {
+
+				adminService.streamAdmins(outputStream);
+
+			} catch (Exception e) {
+
+				throw new RuntimeException(e);
+			}
+		};
+	}
+
 }

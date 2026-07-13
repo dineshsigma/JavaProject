@@ -68,7 +68,7 @@ public class EmployeeController {
 
 			EmployeeResponseDTO responseDTO = mapper.toDto(emp); // After saving data convert for respone which fileds
 																	// aredisplyed to client
-			return ResponseEntity.status(201)
+			return ResponseEntity.status(HttpStatus.CREATED)
 					.body(new ApiResponse<>(201, "Employee created successfully", responseDTO));
 
 		} catch (RuntimeException ex) {

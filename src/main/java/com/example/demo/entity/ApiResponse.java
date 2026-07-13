@@ -22,9 +22,7 @@ public class ApiResponse<T> {
 	private Pagination pagination;
 	
 
-
-
-	public ApiResponse(int status, String message, T data) {
+	public ApiResponse(int status , String message, T data) {
 		this.timestamp = LocalDateTime.now();
 		this.status = status;
 		this.message = message;
