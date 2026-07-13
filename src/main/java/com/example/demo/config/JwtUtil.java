@@ -21,9 +21,9 @@ public class JwtUtil {
 	private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
 	// ✅ Generate Token
-	public String generateToken(String username) {
+	public String generateToken(String username, String roleName) {
 
-		return Jwts.builder().setSubject(username).setIssuedAt(new Date())
+		return Jwts.builder().setSubject(username).claim("role", roleName).setIssuedAt(new Date())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
 				.signWith(key, SignatureAlgorithm.HS256).compact();
 	}
@@ -48,5 +48,9 @@ public class JwtUtil {
 	// ✅ Extract Username
 	public String getUsername(String token) {
 		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+	}
+	
+	public Claims getClaimsFromToken(String token) {
+		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 	}
 }

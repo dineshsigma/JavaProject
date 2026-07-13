@@ -2,6 +2,10 @@ package com.example.demo.service;
 
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import com.example.demo.dto.CsvUploadResponseDTO;
 import com.example.demo.dto.EmployeeRequestDTO;
 
 import com.example.demo.dto.EmployeeResponseDTO;
@@ -14,7 +18,11 @@ public interface EmployeeService {
 
 	List<Employee> getAll();
 
-	public ApiResponse<List<EmployeeResponseDTO>> getEmployees(int pageNumber, int size, String empId, String sortField,String sortOrder);
-	
+	public ApiResponse<List<EmployeeResponseDTO>> getEmployees(int pageNumber, int size, String empId, String sortField,
+			String sortOrder);
+
 	public Employee update(UUID id, EmployeeRequestDTO request);
+
+	public CsvUploadResponseDTO uploadCsv(MultipartFile file);
+
 }

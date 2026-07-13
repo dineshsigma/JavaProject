@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 
 @RestController
-@RequestMapping("/menu-items")
+@RequestMapping("/api/menu-items")
 @RequiredArgsConstructor
 public class MenuItemController {
 

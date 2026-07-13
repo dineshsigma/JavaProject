@@ -4,15 +4,19 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.dto.CsvUploadResponseDTO;
 import com.example.demo.dto.EmployeeRequestDTO;
 import com.example.demo.dto.EmployeeResponseDTO;
 import com.example.demo.entity.Employee;
 import com.example.demo.mapper.EmployeeMapper;
 import com.example.demo.service.EmployeeService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import com.example.demo.entity.ApiResponse;
 
@@ -78,19 +82,26 @@ public class EmployeeController {
 	@PutMapping("/{id}")
 	public ResponseEntity<ApiResponse<EmployeeResponseDTO>> updateEmployee(@PathVariable UUID id,
 			@Valid @RequestBody EmployeeRequestDTO request) {
-		
+
 		try {
 			Employee updated = employeeservice.update(id, request);
 
 			EmployeeResponseDTO dto = mapper.toDto(updated);
 
 			return ResponseEntity.ok(new ApiResponse<>(200, "Employee updated successfully", dto));
-			
-		}catch(RuntimeException ex) {
+
+		} catch (RuntimeException ex) {
 			return ResponseEntity.status(400).body(new ApiResponse<>(400, ex.getMessage(), null));
-			
+
 		}
-		
+
+	}
+
+	@PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<CsvUploadResponseDTO> uploadCsv(HttpServletRequest request,@RequestParam("file") MultipartFile file) {
+		System.out.println("dsbdfb" + request.getContentType());
+		return ResponseEntity.ok(employeeservice.uploadCsv(file));
+
 	}
 
 }

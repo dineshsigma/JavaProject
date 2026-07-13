@@ -62,20 +62,17 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleNoDataFound(NoDataFoundException ex, HttpServletRequest request) {
 		return buildResponse(HttpStatus.NO_CONTENT, "NO_CONTENT", ex.getMessage(), request);
 	}
-	
-	
+
+	@ExceptionHandler(CsvProcessingException.class)
+	public ResponseEntity<ErrorResponse> handleCsvException(CsvProcessingException ex) {
+		return buildResponse(HttpStatus.NO_CONTENT, "CSV EXCEPTION HANDLING", ex.getMessage(), null);
+	}
+
 	@ExceptionHandler(DuplicateResourceException.class)
-	public ResponseEntity<?> handleDuplicate(
-	        DuplicateResourceException ex,
-	        HttpServletRequest request) {
+	public ResponseEntity<?> handleDuplicate(DuplicateResourceException ex, HttpServletRequest request) {
 
-	    ErrorResponse error = new ErrorResponse(
-	            400,
-	            "Duplicate Data",
-	            ex.getMessage(),
-	            request.getRequestURI()
-	    );
+		ErrorResponse error = new ErrorResponse(400, "Duplicate Data", ex.getMessage(), request.getRequestURI());
 
-	    return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 }

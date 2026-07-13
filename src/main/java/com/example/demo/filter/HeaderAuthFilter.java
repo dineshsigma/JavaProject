@@ -1,17 +1,26 @@
 package com.example.demo.filter;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import org.slf4j.MDC;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.example.commons.utlity.CommonConstants;
+import com.example.demo.config.JwtUtil;
+
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import java.util.ArrayList;
-import com.example.demo.config.JwtUtil;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
 
 @Component
 public class HeaderAuthFilter extends OncePerRequestFilter {
@@ -41,7 +50,10 @@ public class HeaderAuthFilter extends OncePerRequestFilter {
            
            System.out.println("Checking path validations: " + path.startsWith("/api/auth"));
 
-           return path.contains("/auth");
+           return path.contains("/auth") || path.startsWith("/swagger-ui")
+                   || path.startsWith("/v3/api-docs")
+                   || path.equals("/swagger-ui.html");
+
     }
 
 
@@ -55,15 +67,43 @@ public class HeaderAuthFilter extends OncePerRequestFilter {
         
         System.out.println("Incoming Request: " + request.getRequestURI());
         System.out.println("Authorization Header: " + headerValue);
+        
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String correlationId = httpRequest.getHeader("X-Correlation-Id");
+        
+        if (correlationId == null || correlationId.isBlank()) {
+			correlationId = UUID.randomUUID().toString();
+		}
+        
+        
+        
+        System.out.println("correlationId" +  correlationId);
+        
+
+        System.out.println("CONTENT TYPE : "
+                       + request.getContentType());
+
+        
+        MDC.put(CommonConstants.CORRELATIONID, correlationId);
+        httpRequest.setAttribute(CommonConstants.CORRELATIONID, correlationId);
 //        System.out.println("validation:" +  !headerValue.equals(VALID_TOKEN));
         
         if (headerValue != null && headerValue.startsWith("Bearer ")) {
         	String token = headerValue.substring(7);
         	if (jwtUtil.validateToken(token)) {
         		String username = jwtUtil.getUsername(token);
-
+        		
+        		Claims claims = jwtUtil.getClaimsFromToken(token);
+        		
+        		String roleName = claims.get("role", String.class);
+        		
+        		MDC.put(CommonConstants.ROLENAME, roleName);
+        		
+        		
+				List<GrantedAuthority> authorities = Collections
+						.singletonList(new SimpleGrantedAuthority("ROLE_" + roleName));
         		UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+                        new UsernamePasswordAuthenticationToken(username, null, authorities);
         		SecurityContextHolder.getContext().setAuthentication(auth);
         		
         	}else {

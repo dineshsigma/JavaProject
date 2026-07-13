@@ -1,23 +1,32 @@
 package com.example.demo.service.impl;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.example.demo.dto.CsvUploadResponseDTO;
 import com.example.demo.dto.EmployeeRequestDTO;
 import com.example.demo.dto.EmployeeResponseDTO;
 import com.example.demo.entity.ApiResponse;
 import com.example.demo.entity.Employee;
+import com.example.demo.entity.Admin;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.service.EmployeeService;
 import com.example.demo.mapper.EmployeeMapper;
+
+import com.example.demo.repository.AdminBatchRepository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import com.example.demo.entity.Pagination;
+import com.example.demo.exception.CsvProcessingException;
 import com.example.demo.exception.DuplicateResourceException;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -27,10 +36,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 	private final EmployeeRepository repository;
 	private final EmployeeMapper mapper;
+	private static final int BATCH_SIZE = 1000;
+	private final AdminBatchRepository adminrepositorty;
 
-	public EmployeeServiceImpl(EmployeeRepository repository, EmployeeMapper mapper) {
+	public EmployeeServiceImpl(EmployeeRepository repository, EmployeeMapper mapper,
+			AdminBatchRepository adminrepositorty) {
 		this.repository = repository;
 		this.mapper = mapper;
+		this.adminrepositorty = adminrepositorty;
 	}
 
 	@Override
@@ -108,9 +121,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 		// Step 2: Check empId uniqueness
 		System.out.println("request.getEmpId()======" + request.getEmpId()); // EMP002
 		Optional<Employee> empWithSameId = repository.findByEmpId(request.getEmpId());
-		
+
 		System.out.println("condition01 ======" + empWithSameId.isPresent()); // true
-		
+
 		System.out.println("condition02 ======" + !empWithSameId.get().getId().equals(id));
 
 		if (empWithSameId.isPresent() && !empWithSameId.get().getId().equals(id)) {
@@ -126,6 +139,85 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 		return repository.save(existing);
 
+	}
+
+	@Override
+	public CsvUploadResponseDTO uploadCsv(MultipartFile file) {
+
+		long total = 0;
+		long success = 0;
+		long failed = 0;
+
+		List<Admin> batch = new ArrayList<>();
+
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+
+			String line;
+
+			reader.readLine(); // skip header
+
+			while ((line = reader.readLine()) != null) {
+
+				total++;
+
+				try {
+
+					String[] data = line.split(",");
+
+					Admin admin = new Admin();
+
+					admin.setId(
+						    UUID.fromString(
+						        data[0].replace("\"", "").trim()
+						    )
+						);
+
+					admin.setFirstName(data[1].replace("\"", "").trim());
+
+					admin.setLastName(data[2].replace("\"", "").trim());
+
+					admin.setEmail(data[3].replace("\"", "").trim());
+
+					admin.setMobileNumber(data[4].replace("\"", "").trim());
+
+					batch.add(admin);
+
+					if (batch.size() == BATCH_SIZE) {
+
+						adminrepositorty.batchInsert(batch);
+
+						success += batch.size();
+
+						batch.clear();
+					}
+
+				} catch (Exception ex) {
+					failed++;
+
+//				    System.err.println("=================================");
+//				    System.err.println("FAILED RECORD : " + line);
+//				    System.err.println("ERROR MESSAGE : " + ex.getMessage());
+//
+//				    ex.printStackTrace();
+//
+//				    System.err.println("=================================");
+
+				}
+			}
+
+			if (!batch.isEmpty()) {
+
+				adminrepositorty.batchInsert(batch);
+
+				success += batch.size();
+			}
+
+			return new CsvUploadResponseDTO("CSV Uploaded Successfully", total, success, failed);
+
+		} catch (Exception ex) {
+
+			throw new CsvProcessingException("Failed to process CSV File");
+		}
 	}
 
 }
