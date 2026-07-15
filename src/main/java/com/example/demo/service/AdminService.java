@@ -30,6 +30,7 @@ public class AdminService {
 		generator.writeStartArray();
 		repository.streamAllAdmins(rs -> {
 			try {
+				
 				generator.writeStartObject();
 				generator.writeStringField("id", rs.getString("id"));
 				generator.writeStringField("firstName", rs.getString("first_name"));
@@ -39,12 +40,9 @@ public class AdminService {
 				generator.writeEndObject();
 
 			} catch (IOException e) {
-
 				throw new RuntimeException(e);
 			}
-
 		});
-
 		generator.writeEndArray();
 		generator.flush();
 		generator.close();

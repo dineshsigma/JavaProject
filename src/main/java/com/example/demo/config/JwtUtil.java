@@ -35,7 +35,7 @@ public class JwtUtil {
 				.signWith(key, SignatureAlgorithm.HS256).compact();
 	}
 
-	// ✅ Validate Token
+	//Validate Token
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -45,7 +45,7 @@ public class JwtUtil {
 		}
 	}
 
-	// ✅ Extract Username
+	//Extract Username
 	public String getUsername(String token) {
 		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
 	}

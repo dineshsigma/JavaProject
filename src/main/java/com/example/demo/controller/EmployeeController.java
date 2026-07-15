@@ -69,7 +69,7 @@ public class EmployeeController {
 			EmployeeResponseDTO responseDTO = mapper.toDto(emp); // After saving data convert for respone which fileds
 																	// aredisplyed to client
 			return ResponseEntity.status(HttpStatus.CREATED)
-					.body(new ApiResponse<>(201, "Employee created successfully", responseDTO));
+					.body(new ApiResponse<>(HttpStatus.CREATED.value(), "Employee created successfully", responseDTO));
 
 		} catch (RuntimeException ex) {
 
@@ -88,10 +88,10 @@ public class EmployeeController {
 
 			EmployeeResponseDTO dto = mapper.toDto(updated);
 
-			return ResponseEntity.ok(new ApiResponse<>(200, "Employee updated successfully", dto));
+			return ResponseEntity.ok(new ApiResponse<>(HttpStatus.ACCEPTED.value(), "Employee updated successfully", dto));
 
 		} catch (RuntimeException ex) {
-			return ResponseEntity.status(400).body(new ApiResponse<>(400, ex.getMessage(), null));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null));
 
 		}
 

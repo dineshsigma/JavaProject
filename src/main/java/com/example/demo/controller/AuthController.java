@@ -87,7 +87,6 @@ public class AuthController {
 		System.out.println("Role Id : " + role.getId());
 		System.out.println("Role Name : " + role.getRoleName());
 
-		
 		String token = jwtUtil.generateToken(email,role.getRoleName());
 
 		String refreshToken = jwtUtil.generateRefreshToken(email);
