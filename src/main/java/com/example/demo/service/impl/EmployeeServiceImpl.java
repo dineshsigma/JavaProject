@@ -74,6 +74,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 		return null;
 	}
 
+
+
 	@Override
 	public ApiResponse<List<EmployeeResponseDTO>> getEmployees(int pageNumber, int size, String empId, String sortField,
 			String sortOrder) {
@@ -166,11 +168,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 					Admin admin = new Admin();
 
-					admin.setId(
-						    UUID.fromString(
-						        data[0].replace("\"", "").trim()
-						    )
-						);
+					admin.setId(UUID.fromString(data[0].replace("\"", "").trim()));
 
 					admin.setFirstName(data[1].replace("\"", "").trim());
 

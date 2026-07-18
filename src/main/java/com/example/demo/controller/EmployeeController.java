@@ -103,5 +103,16 @@ public class EmployeeController {
 		return ResponseEntity.ok(employeeservice.uploadCsv(file));
 
 	}
+	
+	@GetMapping("/{empId}")
+	public ResponseEntity<?> getEmployees(@PathVariable(required = false) String empId){
+		
+		System.out.println("empId" + "" + empId);
+		
+		
+		
+		return ResponseEntity.ok("successs");
+		
+	}
 
 }

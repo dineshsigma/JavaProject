@@ -3,6 +3,7 @@ import lombok.Data;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import lombok.Builder;
 
 @Data
 public class EmployeeResponseDTO {
