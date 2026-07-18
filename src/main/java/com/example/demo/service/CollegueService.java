@@ -17,20 +17,15 @@ public class CollegueService {
 	private final CollegueRepository collegueRepository;
 
 	public ApiResponse<CollegueResponseDTO> createCollegue(CollegueRequestDTO request) {
-
 		try {
-
 			if (collegueRepository.existsByEmail(request.getEmail())) {
 				return new ApiResponse<>(HttpStatus.CONFLICT.value(), "Email already exists", null);
 			}
-
 			if (collegueRepository.existsByMobileNumber(request.getMobileNumber())) {
 
 				return new ApiResponse<>(HttpStatus.CONFLICT.value(), "Mobile Number already exists", null);
 			}
-
 			Collegue collegue = new Collegue();
-
 			collegue.setCollegueId("COL" + System.currentTimeMillis());
 			collegue.setCollegueName(request.getCollegueName());
 			collegue.setEmail(request.getEmail());
@@ -40,9 +35,7 @@ public class CollegueService {
 			collegue.setMobileNumber(request.getMobileNumber());
 			collegue.setDateOfJoining(request.getDateOfJoining());
 			collegue.setStatus(request.getStatus());
-
 			collegue = collegueRepository.save(collegue);
-
 			CollegueResponseDTO response = CollegueResponseDTO.builder().collegueId(collegue.getCollegueId())
 					.collegueName(collegue.getCollegueName()).dateOfJoining(collegue.getDateOfJoining())
 					.department(collegue.getDepartment()).designation(collegue.getDesignation())
